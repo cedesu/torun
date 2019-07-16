@@ -1,0 +1,32 @@
+authorName: default
+experimentName: tpe_mnli3_vs
+trialConcurrency: 20
+maxExecDuration: 9600h
+maxTrialNum: 10000
+#choice: local, remote, pai
+trainingServicePlatform: pai
+searchSpacePath: search_space.json
+#choice: true, false
+useAnnotation: false
+nniManagerIp: 10.150.144.163
+tuner:
+  #choice: TPE, Random, Anneal, Evolution, BatchTuner, MetisTuner
+  #SMAC (SMAC should be installed through nnictl)
+  builtinTunerName: TPE
+  #classArgs:
+    #choice: maximize, minimize
+    #optimize_mode: maximize
+trial:
+  command: hdfs dfs -get $PAI_DEFAULT_FS_URI/v-yimao/data1/MNLI /root;hdfs dfs -get $PAI_DEFAULT_FS_URI/v-yimao/data1/svd_weight /root;python3 ./run_classifier_nni.py --data_dir /root/MNLI --bert_model bert-base-uncased --task_name mnli --do_train --do_eval --num_train_epochs 2 --do_lower_case --learning_rate 2e-5
+  codeDir: .
+  gpuNum: 1
+  cpuNum: 1
+  memoryMB: 8196
+  image: suguinan/pytorch.bert.last
+  dataDir: hdfs://10.151.40.179:9000/v_yimao
+  outputDir: hdfs://10.151.40.179:9000/v_yimao
+  virtualCluster: nni
+paiConfig:
+  userName: v_yimao
+  passWord: v_yimao123
+  host: 10.151.40.179
